@@ -1,0 +1,170 @@
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+h1 {
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+button {
+    border: 0;
+    border-radius: 5px;
+
+    font-size: 24px;
+
+    width: calc(100% - 5px);
+    height: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+}
+.operators button {
+    width: calc(17% - 7px)
+}
+
+.zero:hover, button:hover {
+    opacity: 0.5;
+    transition: 200ms;
+    background-color: gray;
+    color: white;
+}
+
+.cross {
+    font-size: 17px;
+    font-weight: 600 !important;
+}
+
+body {
+    margin: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-holder, input {
+    width: 100%;
+}
+
+input {
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    background-color: #838181;
+    color: white;
+    font-size: 32px;
+    padding: 5px 10px;
+}
+
+.buttons {
+    margin-top: 25px;
+    width: 100%;
+
+}
+
+.operators {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.calculator {
+    border: 2px solid black;
+
+    padding: 25px;
+    width: 400px;
+
+    display: flex;
+    align-items: center;
+
+    flex-direction: column;
+}
+
+.bold {
+    font-weight: 400;
+}
+
+.digits {
+    margin-top: 20px;
+
+    width: 350px;
+    display: flex;
+    flex-wrap: wrap;
+
+    row-gap: 20px;
+}
+
+
+.digit-container {
+    width: 33%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.j-center {
+    display: flex;
+    justify-content: center;
+}
+
+.j-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.flex {
+    width: 100%;
+    display: flex;
+    column-gap: 10px;
+}
+
+.zero {
+
+    border-radius: 5px;
+
+    border: 0;
+    border-radius: 5px;
+
+    font-size: 24px;
+
+    height: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+
+    background-color: rgb(240, 240, 240);
+}
+
+
+.equal {
+    border-radius: 5px;
+
+    border: 0;
+    border-radius: 5px;
+
+    font-size: 24px;
+
+    height: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+
+    background-color: rgb(240, 240, 240);
+}
+
+input {
+    pointer-events: none;
+}
