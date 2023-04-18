@@ -1,3 +1,4 @@
+// Parsing digits
 const zero = document.getElementById("zero");
 const one = document.getElementById("one");
 const two = document.getElementById("two");
@@ -10,9 +11,26 @@ const eight = document.getElementById("eight");
 const nine = document.getElementById("nine");
 const decimal = document.getElementById("decimal");
 
-const negative = document.getElementById("negative");
+// Parsing operators that divide arguments
+const plus = document.getElementById("plus");
+const minus = document.getElementById("minus");
+const multiply = document.getElementById("multiply");
+const divide = document.getElementById("divide");
 
+// Parsing special operators
+const negative = document.getElementById("negative");
+const equal = document.getElementById("equal");
+const clear = document.getElementById("clear");
+
+// Parsing the display field of calculator
 const input = document.getElementById("input");
+
+const operators = {
+  plus,
+  minus,
+  multiply,
+  divide,
+};
 
 const digits = {
   zero,
@@ -28,101 +46,144 @@ const digits = {
   decimal,
 };
 
-const plus = document.getElementById("plus");
-const minus = document.getElementById("minus");
-const multiply = document.getElementById("multiply");
-const divide = document.getElementById("divide");
-const equal = document.getElementById("equal");
+input.value = 0;
 
-const clear = document.getElementById("clear");
+// User will sequentially fill expression to be calculated
 
-const operators = {
-  plus,
-  minus,
-  multiply,
-  divide,
-  equal,
-};
-
+// First argument comes first
 let firstArg;
-let secondArg;
+// Then the operator (+ - / *) divide to arguments
 let operator;
+// Once user divided the arguments they can define the second argument
+let secondArg;
+
 let result;
 
-for (let key in digits) {
-  digits[key].addEventListener("click", (e) => {
-    if (firstArg === undefined) {
-      firstArg = e.target.textContent.trim();
-      input.value = firstArg;
-    } else if (!operator && firstArg) {
-      firstArg += e.target.textContent.trim();
-      input.value = firstArg;
-    }
+// Getting rid of excessive decimal points in arguments
+const getCleanedExcessiveDecimalPointsString = (string) => {
+  let isDecimalExist = false;
+  let result = string;
 
-    if (operator && secondArg === undefined) {
-      secondArg = e.target.textContent.trim();
-      input.value = `${firstArg} ${operator} ${secondArg}`;
-    } else if (operator && secondArg) {
-      secondArg += e.target.textContent.trim();
-      input.value = `${firstArg} ${operator} ${secondArg}`;
+  for (let i = 0; i < result.length; i++) {
+    if (result[i] === ".") {
+      if (isDecimalExist) {
+        let beforeDecimal = result.slice(0, i);
+        let afterDecimal = result.slice(i + 1, result.length - 1);
+        result = `${beforeDecimal}${afterDecimal}`;
+      }
+
+      isDecimalExist = true;
     }
-  });
-}
+  }
+
+  return result;
+};
+
+// Handle click on digit buttons
+const handleDigits = (e) => {
+  // Parsing textcontent of a button to obtain en exact digit (value)
+  let content = e.target.textContent.trim();
+
+  // Firstly, filling the first arg
+  if (!firstArg) {
+    firstArg = content;
+    input.value = firstArg;
+  } else if (!operator && firstArg) {
+    firstArg += content;
+    firstArg = getCleanedExcessiveDecimalPointsString(firstArg);
+    input.value = firstArg;
+  }
+
+  // After operator is set we can fill the second arg
+  if (operator && !secondArg) {
+    secondArg = content;
+    input.value = `${firstArg} ${operator} ${secondArg}`;
+  } else if (operator && secondArg) {
+    secondArg += content;
+    secondArg = getCleanedExcessiveDecimalPointsString(secondArg);
+    input.value = `${firstArg} ${operator} ${secondArg}`;
+  }
+};
 
 const handleOperators = (e) => {
-  if (
-    firstArg &&
-    secondArg === undefined &&
-    e.target.textContent.trim() !== "="
-  ) {
-    operator = e.target.textContent.trim();
+  const content = e.target.textContent.trim();
+
+  if (firstArg && secondArg === undefined && content !== "=") {
+    operator = content;
 
     if (operator === "✕") {
       operator = "*";
     }
 
     input.value = `${firstArg} ${operator}`;
-  } else if (firstArg && secondArg && e.target.textContent.trim() === "=") {
-    result = eval(`${firstArg} ${operator} ${secondArg}`);
-    input.value = `${result}`;
-    firstArg = undefined;
-    secondArg = undefined;
-    operator = undefined;
   }
 };
 
-for (let key in operators) {
-  operators[key].addEventListener("click", (e) => handleOperators(e));
-}
+// Evaluate the result of expression
+const handleEqualOperator = () => {
+  if (!firstArg || !secondArg) {
+    return;
+  }
 
-clear.addEventListener("click", () => {
-  firstArg = undefined;
-  secondArg = undefined;
-  operator = undefined;
-  result = undefined;
-  input.value = "";
-});
+  if (firstArg === ".") {
+    firstArg = "0";
+  }
+
+  if (secondArg === ".") {
+    secondArg = "0";
+  }
+
+  if (firstArg && secondArg) {
+    result = eval(`${firstArg} ${operator} ${secondArg}`);
+    input.value = `${result}`;
+
+    handleCleanup();
+  }
+};
+
+const toggleNegative = (string) => {
+  if (string[0] === "-") {
+    string = string.slice(1, string.length);
+  } else {
+    string = `-${string}`;
+  }
+};
 
 const handleNegative = () => {
+  // Handling first arg
   if (firstArg && !secondArg && !operator) {
-    if (firstArg[0] === "-") {
-      firstArg = firstArg.slice(1, firstArg.length);
-    } else {
-      firstArg = `-${firstArg}`;
-    }
-
+    toggleNegative(firstArg);
     input.value = firstArg;
+    // Handling situtation when we have operator and don't have second arg yet
   } else if (firstArg && !secondArg && operator) {
     input.value = `${firstArg} ${operator}`;
+    // Handling second arg
   } else if (secondArg) {
-    if (secondArg[0] === "-") {
-      secondArg = secondArg.slice(1, secondArg.length);
-    } else {
-      secondArg = `-${secondArg}`;
-    }
-
+    toggleNegative(secondArg);
     input.value = `${firstArg} ${operator} ${secondArg}`;
   }
 };
 
+// Clean all the fileds so we can start again
+const handleCleanup = () => {
+  firstArg = undefined;
+  secondArg = undefined;
+  operator = undefined;
+  result = undefined;
+};
+
+// Attach event listeners for digit buttons
+for (let key in digits)
+  digits[key].addEventListener("click", (e) => handleDigits(e));
+
+// Attach event listeners for operator buttons
+for (let key in operators)
+  operators[key].addEventListener("click", (e) => handleOperators(e));
+
+// Attaching listeners for special buttons
+equal.addEventListener("click", handleEqualOperator);
 negative.addEventListener("click", handleNegative);
+clear.addEventListener("click", () => {
+  handleCleanup();
+  input.value = "0";
+});
